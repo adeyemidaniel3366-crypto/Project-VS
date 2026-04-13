@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://microsoft.github.io/vscode-codicons/dist/codicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+</head>
+<body>
+    <div class="vscode-app">
+        <header class="title-bar">
+            <div class="title-bar-menu">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="VS Code Logo" class="vscode-icon">
+                <div class="menu-item" id="menu-file">File</div>
+                <div class="menu-item" id="menu-edit">Edit</div>
+                <div class="menu-item" id="menu-selection">Selection</div>
+                <div class="menu-item" id="menu-view">View</div>
+                <div class="menu-item" id="menu-go">Go</div>
+                <div class="menu-item" id="menu-run">Run</div>
+                <div class="menu-item" id="menu-terminal">Terminal</div>
+                <div class="menu-item" id="menu-help">Help</div>
+            </div>
+            <div class="title-bar-title">Visual Studio Code</div>
+        </header>
+
+        <div class="workbench">
+            <nav class="activity-bar">
+                <div class="activity-top">
+                    <div class="activity-icon active" data-panel="explorer" title="Explorer">
+                        <i class="codicon codicon-files"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="search" title="Search">
+                        <i class="codicon codicon-search"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="source-control" title="Source Control">
+                        <i class="codicon codicon-source-control"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="run-debug" title="Run and Debug">
+                        <i class="codicon codicon-debug-alt"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="extensions" title="Extensions">
+                        <i class="codicon codicon-extensions"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="outline" title="Outline">
+                        <i class="codicon codicon-symbol-class"></i>
+                    </div>
+                </div>
+                <div class="activity-bottom">
+                    <div class="activity-icon" title="Accounts">
+                        <i class="codicon codicon-account"></i>
+                    </div>
+                    <div class="activity-icon" title="Manage" data-panel="settings">
+                        <i class="codicon codicon-settings-gear"></i>
+                    </div>
+                </div>
+            </nav>
+
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span id="sidebar-title">EXPLORER</span>
+                    <div class="sidebar-actions">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </div>
+                </div>
+                <div class="sidebar-content" id="sidebar-content">
+                </div>
+            </aside>
+
+            <!-- Additional Sidebar Panels -->
+            <aside class="sidebar-panel" id="source-control-panel" style="display: none;">
+                <div class="sidebar-header">
+                    <span>SOURCE CONTROL</span>
+                    <div class="sidebar-actions">
+                        <i class="codicon codicon-more"></i>
+                    </div>
+                </div>
+                <div class="source-control-content">
+                    <div class="changes-summary">
+                        <div class="change-item">
+                            <i class="codicon codicon-diff-modified"></i>
+                            <span>index.html</span>
+                        </div>
+                        <div class="change-item">
+                            <i class="codicon codicon-diff-added"></i>
+                            <span>script.js</span>
+                        </div>
+                    </div>
+                    <div class="commit-section">
+                        <input type="text" placeholder="Message (Ctrl+Enter to commit)" id="commit-message">
+                        <button id="commit-btn">✓</button>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="sidebar-panel" id="extensions-panel" style="display: none;">
+                <div class="sidebar-header">
+                    <span>EXTENSIONS</span>
+                    <div class="sidebar-actions">
+                        <i class="codicon codicon-more"></i>
+                    </div>
+                </div>
+                <div class="extensions-content">
+                    <div class="extension-search">
+                        <input type="text" placeholder="Search extensions in Marketplace" id="extension-search">
+                    </div>
+                    <div class="extension-list" id="extension-list">
+                        <div class="extension-item">
+                            <div class="extension-icon">📦</div>
+                            <div class="extension-info">
+                                <div class="extension-name">Prettier - Code formatter</div>
+                                <div class="extension-description">Code formatter using prettier</div>
+                                <div class="extension-meta">esbenp.prettier-vscode • 10.1.0</div>
+                            </div>
+                            <button class="extension-install-btn">Install</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="sidebar-panel" id="outline-panel" style="display: none;">
+                <div class="sidebar-header">
+                    <span>OUTLINE</span>
+                </div>
+                <div class="outline-content" id="outline-content">
+                    <div class="outline-item" data-type="function">
+                        <i class="codicon codicon-symbol-function"></i>
+                        <span>init()</span>
+                    </div>
+                    <div class="outline-item" data-type="variable">
+                        <i class="codicon codicon-symbol-variable"></i>
+                        <span>editor</span>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="sidebar-panel" id="settings-panel" style="display: none;">
+                <div class="sidebar-header">
+                    <span>SETTINGS</span>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-search">
+                        <input type="text" placeholder="Search settings" id="settings-search">
+                    </div>
+                    <div class="settings-list" id="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-label">Editor: Font Size</div>
+                            <input type="number" value="14" class="setting-input">
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Editor: Tab Size</div>
+                            <input type="number" value="4" class="setting-input">
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="resizer vertical-resizer" id="sidebar-resizer"></div>
+
+            <main class="main-split">
+                <section class="editor-area" id="main">
+                    <div class="editor-tabs" id="editor-tabs">
+                    </div>
+                    <div class="breadcrumbs" id="breadcrumbs">
+                        <!-- Breadcrumbs will be populated here -->
+                    </div>
+                    <div class="editor-content">
+                        <div id="vscode-welcome" class="vscode-welcome" style="display: none;">
+                            <div class="welcome-header">
+                                <h1>Visual Studio Code</h1>
+                                <h2>Editing evolved</h2>
+                            </div>
+                            <div class="welcome-columns">
+                                <div class="welcome-column">
+                                    <h3>START</h3>
+                                    <ul>
+                                        <li><a href="#" onclick="openFileByName('index.html'); return false;"><i class="fa-brands fa-html5" style="color:#e34c26"></i> Open index.html</a></li>
+                                        <li><a href="#" onclick="openFileByName('style.css'); return false;"><i class="fa-brands fa-css3-alt" style="color:#264de4"></i> Open style.css</a></li>
+                                        <li><a href="#" onclick="openFileByName('script.js'); return false;"><i class="fa-brands fa-js" style="color:#f7df1e"></i> Open script.js</a></li>
+                                    </ul>
+                                </div>
+                                <div class="welcome-column">
+                                    <h3>HELP</h3>
+                                    <ul>
+                                        <li><a href="#" onclick="showCommandPalette(); return false;"><i class="codicon codicon-symbol-color" style="color:#007acc"></i> Show All Commands <span class="shortcut">Ctrl+Shift+P</span></a></li>
+                                        <li><a href="#" onclick="return false;"><i class="codicon codicon-keyboard" style="color:#007acc"></i> Keyboard Shortcuts <span class="shortcut">Ctrl+K Ctrl+S</span></a></li>
+                                        <li><a href="#" onclick="openDocumentation(); return false;"><i class="codicon codicon-book" style="color:#007acc"></i> Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="editor"></div>
+                    </div>
+                </section>
+
+                <div class="resizer horizontal-resizer" id="panel-resizer"></div>
+
+                <section class="bottom-panel" id="bottom-panel">
+                    <div class="panel-header">
+                        <div class="panel-tabs">
+                            <div class="panel-tab">PROBLEMS</div>
+                            <div class="panel-tab">OUTPUT</div>
+                            <div class="panel-tab">DEBUG CONSOLE</div>
+                            <div class="panel-tab active">TERMINAL</div>
+                            <div class="panel-tab">PORTS</div>
+                            <div class="panel-tab">TIMELINE</div>
+                            <div class="panel-tab">COMMENTS</div>
+                            <div class="panel-tab">BREAKPOINTS</div>
+                        </div>
+                        <div class="panel-actions">
+                            <i class="fa-solid fa-plus"></i>
+                            <i class="fa-solid fa-trash-can"></i>
+                            <i class="fa-solid fa-xmark" id="close-panel-btn"></i>
+                        </div>
+                    </div>
+                    <div class="panel-content" id="terminal-content">
+                        <div id="terminal-output"></div>
+                        <div class="terminal-input-line">
+                            <span class="prompt">PS C:\User\Dev></span>
+                            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
+                        </div>
+                    </div>
+                    <div class="panel-content" id="problems-content" style="display: none;">
+                        <div id="problems-list"></div>
+                    </div>
+                    <div class="panel-content" id="output-content" style="display: none;">
+                        <div id="output-list"></div>
+                    </div>
+                    <div class="panel-content" id="timeline-content" style="display: none;">
+                        <div id="timeline-list">
+                            <div class="timeline-item">
+                                <i class="codicon codicon-git-commit"></i>
+                                <span>Initial commit</span>
+                                <span class="timeline-date">2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content" id="comments-content" style="display: none;">
+                        <div id="comments-list">
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-author">User</span>
+                                    <span class="comment-date">1 hour ago</span>
+                                </div>
+                                <div class="comment-body">This looks good!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content" id="breakpoints-content" style="display: none;">
+                        <div id="breakpoints-list">
+                            <div class="breakpoint-item">
+                                <i class="codicon codicon-debug-breakpoint"></i>
+                                <span>script.js:15</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item"><i class="fa-solid fa-code-branch"></i> main</div>
+                <div class="status-item"><i class="fa-solid fa-arrows-rotate"></i></div>
+                <div class="status-item"><i class="fa-solid fa-circle-xmark"></i> 0 <i class="fa-solid fa-triangle-exclamation"></i> 0</div>
+            </div>
+            <div class="status-right">
+                <div class="status-item" id="status-line-col">Ln 1, Col 1</div>
+                <div class="status-item">Spaces: 4</div>
+                <div class="status-item">UTF-8</div>
+                <div class="status-item">CRLF</div>
+                <div class="status-item" id="status-language">Plain Text</div>
+                <div class="status-item"><i class="fa-regular fa-bell"></i></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="shortcuts-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button class="modal-close" onclick="closeModal('shortcuts-modal')">&times;</button>
+            </div>
+            <div class="shortcuts-list">
+                <div class="shortcut-section">
+                    <h3>General</h3>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+Shift+P</span>
+                        <span class="description">Show Command Palette</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+K Ctrl+S</span>
+                        <span class="description">Keyboard Shortcuts</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+Shift+N</span>
+                        <span class="description">New Window</span>
+                    </div>
+                </div>
+                <div class="shortcut-section">
+                    <h3>Editor</h3>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+P</span>
+                        <span class="description">Quick Open, Go to File</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+Shift+F</span>
+                        <span class="description">Find in Files</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+F</span>
+                        <span class="description">Find</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="keys">Ctrl+H</span>
+                        <span class="description">Replace</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Picker Modal -->
+    <div class="theme-picker" id="theme-picker" style="display: none;">
+      <div class="theme-picker-header">
+        <h3>Select Color Theme</h3>
+        <button class="theme-picker-close" onclick="hideThemePicker()">&times;</button>
+      </div>
+      <div class="theme-list">
+        <!-- Dark Modern -->
+        <div class="theme-item active" data-theme="vs-dark">
+          <div class="theme-preview">
+            <div class="theme-color" style="background: #1e1e1e;"></div>
+            <div class="theme-color" style="background: #cccccc;"></div>
+            <div class="theme-color" style="background: #007acc;"></div>
+          </div>
+          <span>Dark Modern</span>
+        </div>
+        <!-- Light Modern -->
+        <div class="theme-item" data-theme="vs-light">
+          <div class="theme-preview">
+            <div class="theme-color" style="background: #ffffff;"></div>
+            <div class="theme-color" style="background: #000000;"></div>
+            <div class="theme-color" style="background: #007acc;"></div>
+          </div>
+          <span>Light Modern</span>
+        </div>
+        <!-- High Contrast -->
+        <div class="theme-item" data-theme="hc-black">
+          <div class="theme-preview">
+            <div class="theme-color" style="background: #000000;"></div>
+            <div class="theme-color" style="background: #ffffff;"></div>
+            <div class="theme-color" style="background: #ffffff;"></div>
+          </div>
+          <span>High Contrast Dark</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
